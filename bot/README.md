@@ -1,6 +1,28 @@
 # Пожарная сводка в Telegram
 
-Для запуска нужен Python 3.10 или новее. Команды выполняются из корня проекта.
+Бот использует aiogram 3 и Python 3.10 или новее. Из корня проекта создайте виртуальное окружение и установите зависимости.
+
+```sh
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+Перед запуском задайте переменные окружения `TELEGRAM_BOT_TOKEN` и, для публикаций, `TELEGRAM_CHAT_ID`. В режиме `--dry-run` они не нужны.
+
+## Структура проекта
+
+| Путь | Назначение |
+| --- | --- |
+| `bot/config.py` | Настройки окружения и создание клиента aiogram |
+| `bot/interactive.py`, `bot/handlers/` | Запуск long polling и маршруты команд и нажатий кнопок |
+| `bot/keyboards.py`, `bot/rendering.py` | Клавиатуры и HTML сообщений |
+| `bot/services/` | Чтение сводки для обработчиков и публикация сообщений с учётом лимитов |
+| `bot/sources/` | Получение данных BurnBeat, NASA FIRMS и чтение локального JSON |
+| `bot/storage.py` | Чтение и сохранение выбора области в JSON |
+| `bot/send.py` | Консольные команды рассылки для оркестратора |
+
+Для запуска в виде модулей используйте `python -m bot.send --digest` и `python -m bot.interactive`.
 
 ## Публикация реальных данных в «Хакатон»
 

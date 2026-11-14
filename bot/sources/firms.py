@@ -9,10 +9,7 @@ from datetime import datetime, timedelta, timezone
 from math import isfinite
 from urllib.request import Request, urlopen
 
-if __package__:
-    from .live import SITE_URL, fetch_json
-else:
-    from live import SITE_URL, fetch_json
+from .burnbeat import SITE_URL, fetch_json
 
 
 FIRMS_FILES_URL = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/"
