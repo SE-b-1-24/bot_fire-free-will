@@ -1,0 +1,9 @@
+[Unit]
+Description=BurnBeat new-hotspot alerts to the Telegram channel
+
+[Service]
+Type=oneshot
+User=@USER@
+WorkingDirectory=@REPO@
+EnvironmentFile=/etc/burnbeat-bot.env
+ExecStart=@REPO@/.venv/bin/python -m bot.send --alerts

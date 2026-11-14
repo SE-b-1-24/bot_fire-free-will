@@ -156,9 +156,11 @@ def render_digest(data: dict, *, region: str | None = None) -> str:
         season = escape(_text(entry, "season"))
         reason = escape(_text(entry, "reason"))
         link = _map_link(entry.get("site_url", data.get("site_url")))
+        since = entry.get("monthly_since")
+        period = f"С {_day_text(_dated_period(since, monthly=False))}" if since else "За месяц"
         blocks.append(
             f"{emoji} <b>{escape(name)} — риск {label}</b>\n"
-            f"   За сутки: {daily} · За месяц: {monthly} ({normal_text})\n"
+            f"   За сутки: {daily} · {period}: {monthly} ({normal_text})\n"
             f"   Сезон: {season}\n"
             f"   Почему: {reason}\n"
             f"   {link}"
@@ -176,8 +178,8 @@ def render_digest(data: dict, *, region: str | None = None) -> str:
         )
     else:
         blocks.append(
-            "Риск — оценка по истории 2000–2025 и прогнозу погоды, не точный прогноз.\n"
-            "Данные: NASA FIRMS (MODIS + VIIRS)."
+            "Риск — оценка по истории 2001–2025 и прогнозу погоды, не точный прогноз.\n"
+            "Данные: NASA FIRMS (VIIRS NOAA-20/21), норма BurnBeat, погода Open-Meteo."
         )
     return _check_length("\n\n".join(blocks))
 

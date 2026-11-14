@@ -61,3 +61,46 @@ class SubscriberStore:
             temporary_path.replace(self.path)
         finally:
             temporary_path.unlink(missing_ok=True)
+
+
+class SeenAlerts:
+    """Remember sent detections so hourly runs do not repeat them.
+
+    One fire seen by several satellites on the same day collapses into one key (~1 km grid)."""
+
+    KEEP_DAYS = 3
+
+    def __init__(self, path: Path):
+        self.path = path
+        try:
+            self._seen = read_json(path)
+        except (FileNotFoundError, ValueError):
+            self._seen = {}
+        self._pending: dict[str, str] = {}
+
+    @staticmethod
+    def _key(alert: dict) -> str:
+        return f'{alert["detected_at"][:10]}|{alert["latitude"]:.2f}|{alert["longitude"]:.2f}'
+
+    def new(self, alerts: list[dict]) -> list[dict]:
+        fresh = []
+        for alert in alerts:
+            key = self._key(alert)
+            if key in self._seen or key in self._pending:
+                continue
+            self._pending[key] = alert["detected_at"]
+            fresh.append(alert)
+        return fresh
+
+    def commit(self) -> None:
+        from datetime import datetime, timedelta, timezone
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=self.KEEP_DAYS)).isoformat()
+        seen = {k: v for k, v in {**self._seen, **self._pending}.items() if v >= cutoff}
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        temporary_file = NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=self.path.parent, prefix=".seen-", delete=False
+        )
+        with temporary_file:
+            json.dump(seen, temporary_file, ensure_ascii=False)
+        Path(temporary_file.name).replace(self.path)
+        self._seen, self._pending = seen, {}

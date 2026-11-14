@@ -1,0 +1,15 @@
+[Unit]
+Description=BurnBeat Telegram bot (interactive /start, /today)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=@USER@
+WorkingDirectory=@REPO@
+EnvironmentFile=/etc/burnbeat-bot.env
+ExecStart=@REPO@/.venv/bin/python -m bot.interactive
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

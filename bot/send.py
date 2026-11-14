@@ -12,10 +12,11 @@ from aiogram.exceptions import AiogramError
 if not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from bot.config import create_bot, get_chat_id, get_token
+from bot.config import DEFAULT_STATE, create_bot, get_chat_id, get_token
+from bot.storage import SeenAlerts
 from bot.rendering import render_alerts, render_digest
 from bot.services.publishing import PublishingError, discover_channels, send_to_channel
-from bot.sources.burnbeat import fetch_digest
+from bot.sources.live import fetch_today_digest as fetch_digest
 from bot.sources.firms import fetch_recent_alerts
 from bot.sources.json_files import read_json
 
@@ -46,11 +47,13 @@ async def _run(args: argparse.Namespace) -> int:
             )
             messages = [render_digest(data)]
         else:
-            data = (
-                await asyncio.to_thread(fetch_recent_alerts)
-                if args.alerts is True
-                else await asyncio.to_thread(read_json, args.alerts)
-            )
+            seen = None
+            if args.alerts is True:
+                data = await asyncio.to_thread(fetch_recent_alerts)
+                seen = SeenAlerts(DEFAULT_STATE.parent / "seen_alerts.json")
+                data["alerts"] = seen.new(data["alerts"])
+            else:
+                data = await asyncio.to_thread(read_json, args.alerts)
             messages = render_alerts(data)
 
         if not messages:
@@ -62,6 +65,8 @@ async def _run(args: argparse.Namespace) -> int:
             token = get_token()
             async with create_bot(token) as bot:
                 await send_to_channel(bot, chat_id, messages)
+            if args.alerts is True and seen is not None:
+                seen.commit()       # remember only after a successful send
         return 0
     except (OSError, ValueError, AiogramError, PublishingError) as error:
         detail = str(error)

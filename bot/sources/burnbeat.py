@@ -1,10 +1,11 @@
 """Read published statistics from the BurnBeat site."""
 
 import json
+import os
 from urllib.request import Request, urlopen
 
 
-SITE_URL = "https://bakai4eg.github.io/fire-free-will/"
+SITE_URL = os.environ.get("BURNBEAT_SITE_URL", "https://bakai4eg.github.io/fire-free-will/")
 REGION_IDS = ("chui", "talas", "issykkul", "naryn", "jalalabad", "osh", "batken")
 
 

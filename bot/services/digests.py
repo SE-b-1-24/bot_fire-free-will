@@ -4,7 +4,7 @@ import asyncio
 from hashlib import sha256
 from pathlib import Path
 
-from ..sources.burnbeat import fetch_digest
+from ..sources.live import fetch_today_digest as fetch_digest
 from ..sources.json_files import read_json
 
 
