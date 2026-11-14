@@ -1,0 +1,70 @@
+{
+  "site_url": "https://example.org/map",
+  "alerts": [
+    {
+      "region": "Чуйская",
+      "latitude": 42.81,
+      "longitude": 74.52,
+      "detected_at": "2026-11-15T04:12:00Z",
+      "power_mw": 7.3,
+      "confidence": "medium"
+    },
+    {
+      "region": "Ошская",
+      "in_region": "Ошской области",
+      "latitude": 40.214,
+      "longitude": 72.895,
+      "detected_at": "2026-11-15T04:10:00Z",
+      "power_mw": 6.8,
+      "confidence": "medium"
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.251,
+      "longitude": 72.932,
+      "detected_at": "2026-11-15T04:11:00Z",
+      "power_mw": 8.7,
+      "confidence": "high"
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.27,
+      "longitude": 72.977,
+      "detected_at": "2026-11-15T04:12:00Z",
+      "power_mw": 3.2,
+      "confidence": "low"
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.309,
+      "longitude": 73.012,
+      "detected_at": "2026-11-15T04:12:00Z",
+      "power_mw": 9.1,
+      "confidence": 82
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.327,
+      "longitude": 73.025,
+      "detected_at": "2026-11-15T04:14:00Z",
+      "power_mw": 16.7,
+      "confidence": "high"
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.345,
+      "longitude": 73.061,
+      "detected_at": "2026-11-15T04:15:00Z",
+      "power_mw": 4,
+      "confidence": 65
+    },
+    {
+      "region": "Ошская",
+      "latitude": 40.38,
+      "longitude": 73.099,
+      "detected_at": "2026-11-15T04:15:00Z",
+      "power_mw": 5.3,
+      "confidence": null
+    }
+  ]
+}

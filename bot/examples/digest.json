@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-15",
+  "site_url": "https://example.org/map",
+  "regions": [
+    {
+      "name": "Чуйская",
+      "risk": "medium",
+      "daily_count": 2,
+      "monthly_count": 12,
+      "monthly_normal": 8,
+      "season": "спад (пик в апреле)",
+      "reason": "сухо (влажность 22%), выше нормы",
+      "site_url": "https://example.org/map?region=chuy&layer=fires"
+    },
+    {
+      "name": "Таласская",
+      "risk": "low",
+      "daily_count": 0,
+      "monthly_count": 1,
+      "monthly_normal": 2,
+      "season": "спад (пик в августе)",
+      "reason": "влажность 64%, очагов за сутки нет"
+    },
+    {
+      "name": "Ошская",
+      "risk": "high",
+      "daily_count": 7,
+      "monthly_count": 19,
+      "monthly_normal": 8,
+      "season": "спад (пик в сентябре)",
+      "reason": "сухо (влажность 19%), порывы ветра до 15 м/с"
+    },
+    {
+      "name": "Джалал-Абадская",
+      "risk": "medium",
+      "daily_count": 1,
+      "monthly_count": 6,
+      "monthly_normal": 5,
+      "season": "спад (пик в сентябре)",
+      "reason": "влажность 34%, очагов за месяц больше нормы"
+    },
+    {
+      "name": "Баткенская",
+      "risk": "medium",
+      "daily_count": 1,
+      "monthly_count": 4,
+      "monthly_normal": 4,
+      "season": "спад (пик в августе)",
+      "reason": "сухо (влажность 26%)"
+    },
+    {
+      "name": "Иссык-Кульская",
+      "risk": "low",
+      "daily_count": 0,
+      "monthly_count": 2,
+      "monthly_normal": 4,
+      "season": "спад (пик в июле)",
+      "reason": "ожидаются осадки, очагов за сутки нет"
+    },
+    {
+      "name": "Нарынская",
+      "risk": "low",
+      "daily_count": 0,
+      "monthly_count": 0,
+      "monthly_normal": 0,
+      "season": "спад (пик в августе)",
+      "reason": "влажность 70%, очагов за месяц нет"
+    }
+  ]
+}
