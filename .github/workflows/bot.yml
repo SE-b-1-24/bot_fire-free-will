@@ -1,0 +1,39 @@
+# BurnBeat bot without a server: GitHub runs the morning digest and the hourly alerts.
+# Needs two repository secrets (Settings -> Secrets and variables -> Actions):
+#   TELEGRAM_BOT_TOKEN  - from @BotFather
+#   TELEGRAM_CHAT_ID    - the channel id (e.g. -100...) or @username
+name: BurnBeat bot
+on:
+  schedule:
+    - cron: "0 2 * * *"      # digest every day at 08:00 Bishkek
+    - cron: "17 * * * *"     # new-hotspot alerts every hour
+  workflow_dispatch:
+    inputs:
+      what:
+        description: "digest or alerts"
+        default: digest
+concurrency: { group: bot, cancel-in-progress: false }
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r requirements.txt
+      - name: Restore bot memory (sent alerts, month counts)
+        uses: actions/cache/restore@v4
+        with: { path: bot/state, key: bot-state-${{ github.run_id }}, restore-keys: bot-state- }
+      - name: Send
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          BURNBEAT_SITE_URL: https://34-40-83-150.sslip.io/
+        run: |
+          WHAT="${{ github.event.inputs.what }}"
+          if [ -z "$WHAT" ]; then if [ "${{ github.event.schedule }}" = "0 2 * * *" ]; then WHAT=digest; else WHAT=alerts; fi; fi
+          python -m bot.send --$WHAT
+      - name: Save bot memory
+        if: always()
+        uses: actions/cache/save@v4
+        with: { path: bot/state, key: bot-state-${{ github.run_id }} }
