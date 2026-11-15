@@ -10,20 +10,27 @@ on:
   workflow_dispatch:
     inputs:
       what:
-        description: "digest or alerts"
+        description: "digest or alerts (alerts = new hotspots + regions above normal)"
         default: digest
-concurrency: { group: bot, cancel-in-progress: false }
+concurrency:
+  group: bot
+  cancel-in-progress: false
 jobs:
   send:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12", cache: pip }
+        with:
+          python-version: "3.12"
+          cache: pip
       - run: pip install -r requirements.txt
       - name: Restore bot memory (sent alerts, month counts)
         uses: actions/cache/restore@v4
-        with: { path: bot/state, key: bot-state-${{ github.run_id }}, restore-keys: bot-state- }
+        with:
+          path: bot/state
+          key: bot-state-${{ github.run_id }}
+          restore-keys: bot-state-
       - name: Send
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
@@ -36,4 +43,6 @@ jobs:
       - name: Save bot memory
         if: always()
         uses: actions/cache/save@v4
-        with: { path: bot/state, key: bot-state-${{ github.run_id }} }
+        with:
+          path: bot/state
+          key: bot-state-${{ github.run_id }}

@@ -280,3 +280,26 @@ def render_alerts(data: dict, *, today: date | None = None) -> list[str]:
         source = "За последние 24 часа · NASA FIRMS\n" if recent else ""
         messages.append(_check_length(f"🚨 <b>{count} {wording} в {place}</b>\n{source}{link}"))
     return messages
+
+
+def render_anomalies(anomalies: list[dict]) -> list[str]:
+    """'Above normal' alerts: one message per region."""
+    messages = []
+    for a in anomalies:
+        name = escape(_text(a, "region"))
+        count = int(_number(a, "count", integer=True))
+        normal = _number(a, "normal")
+        ratio = a.get("ratio")
+        if ratio:
+            times = f"{round(ratio)} раз" if ratio >= 5 else f"{ratio:g} раза"
+            head = f"📈 <b>{name}: в {times} выше нормы</b>"
+            usual = f"обычно около {normal:g} за неделю"
+        else:
+            head = f"📈 <b>{name}: необычно для сезона</b>"
+            usual = "обычно меньше одного за неделю"
+        month = escape(str(a.get("month_loc", "")))
+        body = f"{count} очагов за 7 дней — {usual}" + (f" в {month}" if month else "") + "."
+        messages.append(_check_length(
+            f"{head}\n{body}\nПроверьте поля и сёла рядом с очагами.\n"
+            f"Спутник VIIRS NOAA-20 · NASA FIRMS\n{_map_link(a.get('site_url'))}"))
+    return messages

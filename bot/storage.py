@@ -104,3 +104,43 @@ class SeenAlerts:
             json.dump(seen, temporary_file, ensure_ascii=False)
         Path(temporary_file.name).replace(self.path)
         self._seen, self._pending = seen, {}
+
+
+class AnomalyLog:
+    """Send an 'above normal' alert for a region at most once per REPEAT_DAYS,
+    unless the count has grown by half since the last alert."""
+
+    REPEAT_DAYS = 3
+
+    def __init__(self, path: Path):
+        self.path = path
+        try:
+            self._sent = read_json(path)
+        except (FileNotFoundError, ValueError):
+            self._sent = {}
+        self._pending: dict[str, dict] = {}
+
+    def new(self, anomalies: list[dict]) -> list[dict]:
+        from datetime import datetime, timedelta, timezone
+        now = datetime.now(timezone.utc)
+        fresh = []
+        for a in anomalies:
+            last = self._sent.get(a["id"])
+            if last:
+                recent = datetime.fromisoformat(last["at"]) > now - timedelta(days=self.REPEAT_DAYS)
+                if recent and a["count"] < 1.5 * last["count"]:
+                    continue
+            self._pending[a["id"]] = {"at": now.isoformat(), "count": a["count"]}
+            fresh.append(a)
+        return fresh
+
+    def commit(self) -> None:
+        sent = {**self._sent, **self._pending}
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        temporary_file = NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=self.path.parent, prefix=".anomaly-", delete=False
+        )
+        with temporary_file:
+            json.dump(sent, temporary_file, ensure_ascii=False)
+        Path(temporary_file.name).replace(self.path)
+        self._sent, self._pending = sent, {}
