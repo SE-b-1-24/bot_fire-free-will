@@ -1,0 +1,28 @@
+# Keeps @burn_beat_bot answering /start and region buttons without a server.
+# A run polls Telegram for up to ~5.8 h; a new run every 5 h replaces the old one (cancel-in-progress),
+# so only one poller talks to Telegram at a time.
+# Uses the same secret as bot.yml: TELEGRAM_BOT_TOKEN.
+name: BurnBeat bot chat
+on:
+  schedule:
+    - cron: "5 */5 * * *"
+  workflow_dispatch:
+concurrency:
+  group: bot-chat
+  cancel-in-progress: true
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Answer chats
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          BURNBEAT_SITE_URL: https://34-40-83-150.sslip.io/
+        run: timeout 20700 python -m bot.interactive || [ $? -eq 124 ]
