@@ -24,5 +24,5 @@ jobs:
       - name: Answer chats
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          BURNBEAT_SITE_URL: https://34-40-83-150.sslip.io/
+          BURNBEAT_SITE_URL: https://bakai4eg.github.io/fire-free-will/
         run: timeout 20700 python -m bot.interactive || [ $? -eq 124 ]

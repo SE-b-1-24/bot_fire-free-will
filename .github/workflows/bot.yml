@@ -35,7 +35,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          BURNBEAT_SITE_URL: https://34-40-83-150.sslip.io/
+          BURNBEAT_SITE_URL: https://bakai4eg.github.io/fire-free-will/
         run: |
           WHAT="${{ github.event.inputs.what }}"
           if [ -z "$WHAT" ]; then if [ "${{ github.event.schedule }}" = "0 2 * * *" ]; then WHAT=digest; else WHAT=alerts; fi; fi
